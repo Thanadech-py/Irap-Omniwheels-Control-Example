@@ -46,11 +46,7 @@ void Motor::_ENC_M3() {
 }
 
 void Motor::set_power(int16_t pwm) {
-  if (pwm == 0) {
-    digitalWrite(_IN1, HIGH);
-    digitalWrite(_IN2, LOW);
-    analogWrite(_ENA, 0);
-  } else if (pwm < 0) {
+  if (pwm < 0) {
     digitalWrite(_IN1, LOW);
     digitalWrite(_IN2, HIGH);
   } else {
@@ -62,14 +58,15 @@ void Motor::set_power(int16_t pwm) {
 
 void Motor::_read_rpm() {
   _currentTime_RISING = micros();
+  _currentTime_Motor = millis();
 
   int direction_motor = 1;
   if (digitalRead(_ENCB) == HIGH) {
     _encoder_count++;
-    direction_motor = 1;
+    direction_motor = -1;
   } else {
     _encoder_count--;
-    direction_motor = -1;
+    direction_motor = 1;
   }
 
   _deltaT = (_currentTime_RISING - _previousTime_RISING);
@@ -79,28 +76,29 @@ void Motor::_read_rpm() {
 }
 
 float Motor::get_rpm() {
+  if (millis() - _currentTime_Motor > 10) {
+    _encoder_count = 0;
+    _freq = 0;
+    _deltaT = 0;
+    _rpm = 0;
+  }
   return _rpm;
 }
 
-void Motor::set_pid(float kp, float ki, float kd, float accept_Error) {
+void Motor::set_pid(float kp, float ki, float kd) {
   _KP = kp;
   _KI = ki;
   _KD = kd;
-  _AE = accept_Error;
 }
 
 
 void Motor::set_rpm(float setpoint_rpm) {
   if (millis() - _pid.current_pid > 10) {
-    float output = _pid.pid_calculation(_KP, _KI, _KD, _rpm, setpoint_rpm, _AE);
-
-    output = constrain(output, -255, 255);
-    set_power((int16_t)output);
+    float output = _pid.pid_motor(_KP, _KI, _KD, get_rpm(), setpoint_rpm);
+    set_power(output);
     _pid.current_pid = millis();
   }
 }
-
-
 
 void Motor::begin() {
   if (!_valid_M && !_valid_E) return;

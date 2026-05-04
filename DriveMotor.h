@@ -4,6 +4,7 @@
 #include "Arduino.h"
 #include "PID_for_omni.h"
 
+
 // ============= Motor Driver Pin =============
 const uint8_t MOTOR_M1_IN1 = 2;
 const uint8_t MOTOR_M1_IN2 = 3;
@@ -37,8 +38,7 @@ class Motor {
   void set_power(int16_t pwm);
   void set_rpm(float setpoint_rpm);
   float get_rpm();
-  void resetEncoder();
-  void set_pid(float kp, float ki, float kd, float accpet_Error);
+  void set_pid(float kp, float ki, float kd);
 
   private:
   //id of each motor
@@ -50,7 +50,7 @@ class Motor {
   //value check
   bool _valid_M, _valid_E;
   //encoder ticks
-  volatile uint32_t _encoder_count;
+  volatile long _encoder_count;
 
   static Motor* _enc_idx[3];
 
@@ -69,6 +69,7 @@ class Motor {
   //Timmer variable
   unsigned long _currentTime_RISING;
   unsigned long _previousTime_RISING = 0;
+  unsigned long _currentTime_Motor;
 
   unsigned long _pid_timmer;
 
@@ -79,7 +80,6 @@ class Motor {
   float _KP;
   float _KI;
   float _KD;
-  float _AE;
 
 };
 
