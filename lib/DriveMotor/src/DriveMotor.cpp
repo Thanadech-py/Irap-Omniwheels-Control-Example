@@ -47,11 +47,11 @@ void Motor::_ENC_M3() {
 
 void Motor::set_power(int16_t pwm) {
   if (pwm < 0) {
-    digitalWrite(_IN1, LOW);
-    digitalWrite(_IN2, HIGH);
-  } else {
     digitalWrite(_IN1, HIGH);
     digitalWrite(_IN2, LOW);
+  } else {
+    digitalWrite(_IN1, LOW);
+    digitalWrite(_IN2, HIGH);
   }
   analogWrite(_ENA, abs(pwm));
 }
@@ -63,10 +63,10 @@ void Motor::_read_rpm() {
   int direction_motor = 1;
   if (digitalRead(_ENCB) == HIGH) {
     _encoder_count++;
-    direction_motor = -1;
+    direction_motor = 1;
   } else {
     _encoder_count--;
-    direction_motor = 1;
+    direction_motor = -1;
   }
 
   _deltaT = (_currentTime_RISING - _previousTime_RISING);
