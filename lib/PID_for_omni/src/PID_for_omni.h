@@ -4,20 +4,30 @@
 
 class PID {
   public:
-  unsigned long current_pid;
-  float pid_motor(float kp, float ki, float kd, float value, float setpoint);
+  unsigned long current_pid_motor;
+  unsigned long current_pid_imu;
+  float pid_motor(float kp, float ki, float kd, float feedback, float setpoint);
+  float pid_imu(float kp, float ki, float kd, float feedback, float setpoint);
   void log_value();
   float _output;
 
 
   private:
-  float _Error;
-  float _LastError;
-  float _Integral;
+  // Motor PID variables
+  float _Error_motor;
+  float _LastError_motor;
+  float _Integral_motor;
+  float _kP_motor;
+  float _kI_motor;
+  float _kD_motor;
 
-  float _kP;
-  float _kI;
-  float _kD;
+  // IMU PID variables
+  float _Error_imu;
+  float _LastError_imu;
+  float _Integral_imu;
+  float _kP_imu;
+  float _kI_imu;
+  float _kD_imu;
   
   
 };

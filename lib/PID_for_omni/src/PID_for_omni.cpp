@@ -1,31 +1,33 @@
 #include "PID_for_omni.h"
 
-float PID::pid_motor(float kp, float ki, float kd, float value, float setpoint) {
-  current_pid = millis();
-  _Error = setpoint - value;
-  // Serial.println(_Error);
-  _Integral += _Error;
-  _Integral = constrain(_Integral, -255.0f, 255.0f);  //anti-windup
+float PID::pid_motor(float kp, float ki, float kd, float feedback, float setpoint) {
+  current_pid_motor = millis();
+  _Error_motor = setpoint - feedback;
+  // Serial.println(_Error_motor);
+  _Integral_motor += _Error_motor;
+  _Integral_motor = constrain(_Integral_motor, -255.0f, 255.0f);  //anti-windup
 
-  _kP = kp * _Error;
-  _kI = ki * _Integral;
-  _kD = kd * (_Error - _LastError);
+  _kP_motor = kp * _Error_motor;
+  _kI_motor = ki * _Integral_motor;
+  _kD_motor = kd * (_Error_motor - _LastError_motor);
 
 
-  _output = _kP + _kI + _kD;
-  _LastError = _Error;
-
-  // Serial.print(" P:");
-  // Serial.print(_kP);
-  // Serial.print(" I:");
-  // Serial.print(_kI);
-  // Serial.print(" D:");
-  // Serial.print(_kD);
-  // Serial.print(" Error:");
-  // Serial.print(_Error);
-  // Serial.print(" OUT:");
-  // Serial.println(_output);
-
-  // Serial.println(_output);
+  _output = _kP_motor + _kI_motor + _kD_motor;
+  _LastError_motor = _Error_motor;
   return constrain(_output, -255, 255);
+}
+
+float PID::pid_imu(float kp, float ki, float kd, float feedback, float setpoint) {
+  current_pid_imu = millis();
+  _Error_imu = setpoint - feedback;
+  _Integral_imu += _Error_imu;
+  _Integral_imu = constrain(_Integral_imu, -360, 360);
+
+  _kP_imu = kp * _Error_imu;
+  _kI_imu = ki * _Integral_imu;
+  _kD_imu = kd * (_Error_imu - _LastError_imu);
+
+  _output = _kP_imu + _kI_imu + _kD_imu;
+  _LastError_imu = _Error_imu;
+  return constrain(_output, -360, 360);
 }

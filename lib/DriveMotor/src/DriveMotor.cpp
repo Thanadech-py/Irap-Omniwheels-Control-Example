@@ -93,10 +93,10 @@ void Motor::set_pid(float kp, float ki, float kd) {
 
 
 void Motor::set_rpm(float setpoint_rpm) {
-  if (millis() - _pid.current_pid > 10) {
+  if (millis() - _pid.current_pid_motor > 10) {
     float output = _pid.pid_motor(_KP, _KI, _KD, get_rpm(), setpoint_rpm);
     set_power(output);
-    _pid.current_pid = millis();
+    _pid.current_pid_motor = millis();
   }
 }
 
