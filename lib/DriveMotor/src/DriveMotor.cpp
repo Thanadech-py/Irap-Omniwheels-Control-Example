@@ -101,7 +101,7 @@ void Motor::set_rpm(float setpoint_rpm) {
 }
 
 void Motor::begin() {
-  if (!_valid_M && !_valid_E) return;
+  // if (!_valid_M && !_valid_E) return;
   pinMode(_IN1, OUTPUT);
   pinMode(_IN2, OUTPUT);
   pinMode(_ENA, OUTPUT);

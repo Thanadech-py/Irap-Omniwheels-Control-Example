@@ -8,7 +8,8 @@ class PID {
   unsigned long current_pid_imu;
   float pid_motor(float kp, float ki, float kd, float feedback, float setpoint);
   float pid_imu(float kp, float ki, float kd, float feedback, float setpoint);
-  void log_value();
+  
+  static inline float InverseIMU(float value);
   float _output;
 
 

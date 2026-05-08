@@ -16,7 +16,7 @@ const uint8_t MOTOR_M2_ENA = 7;
 
 const uint8_t MOTOR_M3_IN1 = 8;
 const uint8_t MOTOR_M3_IN2 = 9;
-const uint8_t MOTOR_M3_ENA = 10;
+const uint8_t MOTOR_M3_ENA = 12;
 
 // ============= Encoder Pin =============
 const uint8_t ENCODER_M1_A = 31;
