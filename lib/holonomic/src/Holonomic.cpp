@@ -93,9 +93,9 @@ void Holonomic::holonomic_drive(float VR, float Alpha, float W) {
 }
 
 void Holonomic::holonomic_stop() {
-  M1.set_rpm(0);
-  M2.set_rpm(0);
-  M3.set_rpm(0);
+  M1.set_power(0);
+  M2.set_power(0);
+  M3.set_power(0);
 }
 
 

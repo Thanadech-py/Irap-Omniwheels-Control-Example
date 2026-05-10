@@ -9,19 +9,29 @@ PID pid;
 float degree = 0.0f;
 void setup() {
   omni.holonomic_begin();
-  // M1.begin();
-  // M2.begin();
-  // M3.begin();
 
-  // M1.set_pid(0.8, 0.6, 0.1);
-  // M2.set_pid(1.2, 1.3, 0.1);
-  // M3.set_pid(0.95, 0.9, 0.1);
+  
 
 }
 
 void loop() {
-  // M1.set_rpm(200);
-  // M2.set_rpm(200);
-  // M3.set_rpm(200);
-  omni.holonomic_drive(40, 90, 200);
+  omni.holonomic_drive(40, 0, 30);
+  delay(1000);
+  omni.holonomic_stop();
+  delay(300);
+  omni.holonomic_drive(40, 90, 30);
+  delay(1000);
+  omni.holonomic_stop();
+  delay(300);
+  omni.holonomic_drive(40, 180, 30);
+  delay(1000);
+  omni.holonomic_stop();
+  delay(300);
+  omni.holonomic_drive(40, 270, 30);
+  delay(1000);
+  omni.holonomic_stop();
+  delay(300);
+  omni.holonomic_drive(40, 0, 30);
+  delay(1000);
+  omni.holonomic_stop();
 }
