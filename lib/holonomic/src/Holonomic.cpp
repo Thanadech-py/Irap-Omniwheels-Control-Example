@@ -44,12 +44,7 @@ static float Holonomic::holonomic_IMU() {
 
 float Holonomic::_InverseIMU() {
   static float pYaw = 0.0f;
-
   float raw = holonomic_IMU();
-  // sensors_event_t event;
-  // IMU.getEvent(&event);
-  // float raw = event.orientation.x;
-
   float inverted = fmod(360.0f - raw, 360.0f);
 
   if (inverted != 0.0f) {
@@ -57,8 +52,6 @@ float Holonomic::_InverseIMU() {
   }
 
   return Holonomic::yaw = pYaw;
-  //     Serial.print(">Yaw: ");
-  // Serial.println(getYaw(), 4);
 }
 
 void Holonomic::compute(float value) {
@@ -71,25 +64,60 @@ void Holonomic::compute(float value) {
   } 
 }
 
-void Holonomic::holonomic_drive(float VR, float Alpha, float W) {
+// เพิ่มคำสั่งเข้า queue
+void Holonomic::queue_drive(float VR, float Alpha, float W, unsigned long time) {
+  if (_queue_size < 10) {
+    _queue[_queue_size++] = {VR, Alpha, W, time};
+  }
+}
+
+// เรียกใน loop() อันเดียว แทน holonomic_drive()
+void Holonomic::update() {
+  // ไม่มีคำสั่งใน queue
+  if (_queue_index >= _queue_size) return;
+
+  DriveCommand& cmd = _queue[_queue_index];
+
+  // เริ่มคำสั่งใหม่
+  if (!_is_running) {
+    _time_function = millis();
+    _is_running = true;
+    Serial.printf("CMD %d: VR=%.1f Alpha=%.1f\n", _queue_index, cmd.VR, cmd.Alpha);
+  }
+
+  // ยังไม่หมดเวลา → ขับปกติ
+  if (millis() - _time_function < cmd.duration) {
+    holonomic_drive_raw(cmd.VR, cmd.Alpha, cmd.W);
+  } 
+  // หมดเวลา → ไปคำสั่งถัดไป
+  else {
+    holonomic_stop();
+    _is_running = false;
+    _queue_index++;
+  }
+}
+
+// ฟังก์ชันขับมอเตอร์จริงๆ (ไม่มี timer)
+void Holonomic::holonomic_drive_raw(float VR, float Alpha, float W) {
   _Alpha = (Alpha * PI) / 180;
-  _theta1 = (90 * PI) / 180;
+  _theta1 = (90  * PI) / 180;
   _theta2 = (210 * PI) / 180;
   _theta3 = (330 * PI) / 180;
-
   compute(W);
-  
-  Serial.print(">Yaw: ");
-  Serial.println(Holonomic::yaw, 4);
 
-  _V_Wheels[0] = VR * cos((_theta1 - _Alpha)) + (_Wheel_Length * _W);
-  _V_Wheels[1] = VR * cos((_theta2 - _Alpha)) + (_Wheel_Length * _W);
-  _V_Wheels[2] = VR * cos((_theta3 - _Alpha)) + (_Wheel_Length * _W);
-
+  _V_Wheels[0] = VR * cos(_theta1 - _Alpha) + (_Wheel_Length * _W);
+  _V_Wheels[1] = VR * cos(_theta2 - _Alpha) + (_Wheel_Length * _W);
+  _V_Wheels[2] = VR * cos(_theta3 - _Alpha) + (_Wheel_Length * _W);
 
   M1.set_rpm(_V_Wheels[0]);
   M2.set_rpm(_V_Wheels[1]);
   M3.set_rpm(_V_Wheels[2]);
+}
+
+void Holonomic::reset_queue() {
+  _queue_size  = 0;
+  _queue_index = 0;
+  _is_running  = false;
 }
 
 void Holonomic::holonomic_stop() {

@@ -33,9 +33,6 @@ float PID::pid_imu(float kp, float ki, float kd, float feedback, float setpoint)
 
   _output = _kP_imu + _kI_imu + _kD_imu;
   _LastError_imu = _Error_imu;
-  Serial.print("Error");
-  Serial.print(_Error_imu);
-  Serial.print("Output");
-  Serial.println(_output);
+  
   return constrain(_output, -360, 360);
 }

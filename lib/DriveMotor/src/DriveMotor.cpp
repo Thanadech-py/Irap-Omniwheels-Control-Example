@@ -114,4 +114,5 @@ void Motor::begin() {
   if (_idx == 1) attachInterrupt(digitalPinToInterrupt(_ENCA), _ENC_M1, RISING);
   else if (_idx == 2) attachInterrupt(digitalPinToInterrupt(_ENCA), _ENC_M2, RISING);
   else if (_idx == 3) attachInterrupt(digitalPinToInterrupt(_ENCA), _ENC_M3, RISING);
+
 }
