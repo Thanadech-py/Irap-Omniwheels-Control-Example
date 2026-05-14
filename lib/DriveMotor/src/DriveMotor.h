@@ -1,11 +1,11 @@
 #ifndef DriveMotor_h
 #define DriveMotor_h
 
+/*Library*/
 #include "Arduino.h"
 #include "PID_for_omni.h"
 
-
-// ============= Motor Driver Pin =============
+/*============= Motor Driver Pin =============*/ 
 const uint8_t MOTOR_M1_IN1 = 2;
 const uint8_t MOTOR_M1_IN2 = 3;
 const uint8_t MOTOR_M1_ENA = 4;
@@ -18,7 +18,7 @@ const uint8_t MOTOR_M3_IN1 = 8;
 const uint8_t MOTOR_M3_IN2 = 9;
 const uint8_t MOTOR_M3_ENA = 12;
 
-// ============= Encoder Pin =============
+/*============= Encoder Pin =============*/
 const uint8_t ENCODER_M1_A = 31;
 const uint8_t ENCODER_M1_B = 30;
 
@@ -28,61 +28,56 @@ const uint8_t ENCODER_M2_B = 28;
 const uint8_t ENCODER_M3_A = 33;
 const uint8_t ENCODER_M3_B = 34;
 
+/*============= Encoder PPR =============*/
+const int16_t PPR = 370;
 
 class Motor {
   public:
 
+  /*Motor Object*/
   Motor(uint8_t idx);
 
+  /*
+  Function
+      - begin -> Set each Motor and Encoder PIN via ID of Motor Object
+      - set_pid -> Set each Motor PID variable for the calculation
+      - set_power -> Control Motor using PWM (Open-loop control)
+      - set_rpm -> Control Motor using RPM (Closed-loop control)
+      - get_rpm -> To get the RPM feedback from Encoder
+  */
   void begin();
+  void set_pid(float kp, float ki, float kd);
   void set_power(int16_t pwm);
   void set_rpm(float setpoint_rpm);
   float get_rpm();
-  void set_pid(float kp, float ki, float kd);
+
+  /*Variable that return the value from _encoder_count which is a private variable
+    so the user can use the pulse from encoder but can not change the value.*/
+  const volatile long& get_EncoderTicks;
+
 
   private:
-  //id of each motor
-  uint8_t _idx;
-  //pin of each motor driver for logic
-  uint8_t _IN1, _IN2, _ENA;
-  //pin of each motor encoder for logic
-  uint8_t _ENCA, _ENCB;
-  //value check
-  bool _valid_M, _valid_E;
-  //encoder ticks
+
+  /*Variable for assign each Motor and Encoder PIN */
+  uint8_t _idx, _IN1, _IN2, _ENA, _ENCA, _ENCB;
+  /*Variable for Lock loop*/
+  unsigned long _currentTime_RISING, _previousTime_RISING, _currentTime_Motor, _pid_timmer;
+  /*Variable for RPM Calculation*/
+  float _rpm, _deltaT, _freq;
+  /*Variable for PID gain*/
+  float _KP, _KI, _KD;
+  /*Variable for store the pulse that are readed from Encoder*/
   volatile long _encoder_count;
 
+  /*Encoder ID by Motor*/
   static Motor* _enc_idx[3];
+  /*PID object*/
+  PID _pid; 
 
-  //interupt handler
-  PID _pid; //PID object
-
-  //private function
-  static void _ENC_M1(); 
-  static void _ENC_M2();
-  static void _ENC_M3();
+  /*private function*/
   void _read_rpm();
-  
-  //Encoder PPR
-  const int16_t _PPR = 370;
-
-  //Timmer variable
-  unsigned long _currentTime_RISING;
-  unsigned long _previousTime_RISING = 0;
-  unsigned long _currentTime_Motor;
-
-  unsigned long _pid_timmer;
-
-  //float variable
-  float _rpm;
-  float _freq;
-  float _deltaT;
-  float _KP;
-  float _KI;
-  float _KD;
-
+  static void _ENC_M1();
+  static void _ENC_M2();
+  static void _ENC_M3(); 
 };
-
-
-
 #endif 

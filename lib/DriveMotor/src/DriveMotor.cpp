@@ -1,6 +1,6 @@
 #include "DriveMotor.h"
 
-Motor::Motor(uint8_t idx) {
+Motor::Motor(uint8_t idx) : get_EncoderTicks(_encoder_count) {
   _idx = idx;
 
   if (_idx == 1) {
@@ -9,27 +9,18 @@ Motor::Motor(uint8_t idx) {
     _ENA = MOTOR_M1_ENA;
     _ENCA = ENCODER_M1_A;
     _ENCB = ENCODER_M1_B;
-    _valid_M = true;
-    _valid_E = true;
   } else if (_idx == 2) {
     _IN1 = MOTOR_M2_IN1;
     _IN2 = MOTOR_M2_IN2;
     _ENA = MOTOR_M2_ENA;
     _ENCA = ENCODER_M2_A;
     _ENCB = ENCODER_M2_B;
-    _valid_M = true;
-    _valid_E = true;
   } else if (_idx == 3) {
     _IN1 = MOTOR_M3_IN1;
     _IN2 = MOTOR_M3_IN2;
     _ENA = MOTOR_M3_ENA;
     _ENCA = ENCODER_M3_A;
     _ENCB = ENCODER_M3_B;
-    _valid_M = true;
-    _valid_E = true;
-  } else {
-    _valid_M = false;
-    _valid_E = false;
   }
 }
 
@@ -71,7 +62,7 @@ void Motor::_read_rpm() {
 
   _deltaT = (_currentTime_RISING - _previousTime_RISING);
   _freq = 1 / (_deltaT / 1e6);
-  _rpm = ((_freq / _PPR) * 60) * direction_motor;
+  _rpm = ((_freq / PPR) * 60) * direction_motor;
   _previousTime_RISING = _currentTime_RISING;
 }
 
@@ -101,7 +92,6 @@ void Motor::set_rpm(float setpoint_rpm) {
 }
 
 void Motor::begin() {
-  // if (!_valid_M && !_valid_E) return;
   pinMode(_IN1, OUTPUT);
   pinMode(_IN2, OUTPUT);
   pinMode(_ENA, OUTPUT);
@@ -111,7 +101,7 @@ void Motor::begin() {
 
   _enc_idx[_idx - 1] = this;
 
-  if (_idx == 1) attachInterrupt(digitalPinToInterrupt(_ENCA), _ENC_M1, RISING);
+  if      (_idx == 1) attachInterrupt(digitalPinToInterrupt(_ENCA), _ENC_M1, RISING);
   else if (_idx == 2) attachInterrupt(digitalPinToInterrupt(_ENCA), _ENC_M2, RISING);
   else if (_idx == 3) attachInterrupt(digitalPinToInterrupt(_ENCA), _ENC_M3, RISING);
 

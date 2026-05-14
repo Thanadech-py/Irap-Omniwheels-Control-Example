@@ -1,36 +1,29 @@
 #ifndef PID_for_omni_h
 #define PID_for_omni_h
+/*Library*/
 #include <Arduino.h>
 
 class PID {
   public:
-  unsigned long current_pid_motor;
-  unsigned long current_pid_imu;
+
+
+  /*Function
+      - pid_motor -> Use to calculate the PID value of Motor RPM and control the motor.
+      - pid_imu -> Use to calculate the PID value of IMU and control the robot heading.
+  */
   float pid_motor(float kp, float ki, float kd, float feedback, float setpoint);
   float pid_imu(float kp, float ki, float kd, float feedback, float setpoint);
-  
-  static inline float InverseIMU(float value);
-  float _output;
-
+  /*Variable for lock loop PID*/
+  unsigned long current_pid_motor, current_pid_imu;
 
   private:
-  // Motor PID variables
-  float _Error_motor;
-  float _LastError_motor;
-  float _Integral_motor;
-  float _kP_motor;
-  float _kI_motor;
-  float _kD_motor;
-
-  // IMU PID variables
-  float _Error_imu;
-  float _LastError_imu;
-  float _Integral_imu;
-  float _kP_imu;
-  float _kI_imu;
-  float _kD_imu;
+  /*Motor PID variables*/ 
+  float _Error_motor, _LastError_motor, _Integral_motor, _kP_motor, _kI_motor, _kD_motor;
   
-  
+  /*IMU PID variables*/ 
+  float _Error_imu, _LastError_imu, _Integral_imu,  _kP_imu, _kI_imu, _kD_imu;
+  /*Output of the PID Calculations*/
+  float _output;
 };
 
 

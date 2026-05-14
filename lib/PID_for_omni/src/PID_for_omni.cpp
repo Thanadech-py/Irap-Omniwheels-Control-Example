@@ -1,16 +1,13 @@
 #include "PID_for_omni.h"
 
 float PID::pid_motor(float kp, float ki, float kd, float feedback, float setpoint) {
-  // current_pid_motor = millis();
   _Error_motor = setpoint - feedback;
-  // Serial.println(_Error_motor);
-  _Integral_motor += _Error_motor;
+  _Integral_motor += _Error_motor; //sumError
   _Integral_motor = constrain(_Integral_motor, -255.0f, 255.0f);  //anti-windup
 
   _kP_motor = kp * _Error_motor;
   _kI_motor = ki * _Integral_motor;
   _kD_motor = kd * (_Error_motor - _LastError_motor);
-
 
   _output = _kP_motor + _kI_motor + _kD_motor;
   _LastError_motor = _Error_motor;
@@ -20,9 +17,10 @@ float PID::pid_motor(float kp, float ki, float kd, float feedback, float setpoin
 float PID::pid_imu(float kp, float ki, float kd, float feedback, float setpoint) {
   current_pid_imu = millis();
   _Error_imu = (setpoint - feedback);
-  _Integral_imu += _Error_imu;
-  _Integral_imu = constrain(_Integral_imu, -360, 360);
+  _Integral_imu += _Error_imu; //sumError
+  _Integral_imu = constrain(_Integral_imu, -360, 360); //anti-windup
 
+  //nearest direction condition control
   if (_Error_imu > 180.0f) _Error_imu -= 360.0f;
   if (_Error_imu < -180.0f) _Error_imu += 360.0f;
   

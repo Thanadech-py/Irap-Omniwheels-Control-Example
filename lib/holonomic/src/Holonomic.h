@@ -8,52 +8,57 @@
 #include "PID_for_omni.h"
 #include "DriveMotor.h"
 
-#define MAX_W_SPEED 0.5f  // maximum angular velocity in radians/sec
-
 class Holonomic {
-  public:
-    void holonomic_begin();
-    void queue_drive(float VR, float Alpha, float W, unsigned long time);
-    void holonomic_stop();
-    void update();
-    void holonomic_drive_raw(float VR, float Alpha, float W);
-    void compute(float value);
-    
-    void reset_queue();
+public:
+  struct DriveCommand {
+    float VR, Alpha, W;
+    unsigned long duration;
+  };
 
-    static float getYaw() {
-      noInterrupts();
-      float y = yaw;
-      interrupts();
-      return y;
-    }
+  void holonomic_begin();
+  void holonomic_stop();
+  void update();
+  void reset_queue();
+  void queue_drive(float VR, float Alpha, float W, unsigned long time);
+  void holonomic_drive_raw(float VR, float Alpha, float W);
+  void compute(float value);
 
-    static volatile float yaw;
+  static float getYaw() {
+    noInterrupts();
+    float y = yaw;
+    interrupts();
+    return y;
+  }
 
+  static volatile float yaw;
 
-    struct DriveCommand {
-      float VR, Alpha, W;
-      unsigned long duration;
-    };
+private:
+  // IMU
+  unsigned long _current_IMU_loop;
+  float _yaw, _yaw_feedback;
+  static float holonomic_IMU();
+  static float _InverseIMU();
 
-  private:
-    unsigned long current_IMU_loop;
+  // Kinematics
+  const float _Wheel_Length = 20.0f;
+  float _theta1, _theta2, _theta3;
+  float _Alpha, _W, _V_Robot;
+  float _V_Wheels[3];
 
-    float _theta1, _theta2, _theta3;
-    float _Alpha, _W;
-    float _Wheel_Length = 20.0f;
-    float _V_Robot, _yaw;
-    float _V_Wheels[3];
-    float _yaw_feedback;
+  // Odometry
+  float _x_previous, _y_previous;
+  float _x_current[3], _y_current[3];
+  float _x_odom, _y_odom;
+  float _x_now,  _y_now;
+  void _odom();
 
-    DriveCommand _queue[10];  // Max cmd 10 in queue
-    int _queue_size   = 0;
-    int _queue_index  = 0;
-    unsigned long _time_function = 0;
-    bool _is_running  = false;
-
-    static float holonomic_IMU();
-    static float _InverseIMU();
+  // Command queue
+  static constexpr uint8_t MAX_QUEUE = 10;
+  DriveCommand _queue[MAX_QUEUE];
+  uint8_t _queue_size  = 0;
+  uint8_t _queue_index = 0;
+  unsigned long _time_function = 0;
+  bool _is_running = false;
 };
 
 #endif

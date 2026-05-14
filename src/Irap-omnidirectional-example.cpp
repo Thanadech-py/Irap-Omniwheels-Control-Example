@@ -13,12 +13,13 @@ void setup() {
 
 void loop() {
   if (!_started) {
-    robot.queue_drive(20,  0,  0, 2000); // เดินหน้า 2s
-    robot.queue_drive(20, 90,  0, 2000); // เดินซ้าย 3s
-    robot.queue_drive(20,180,  0, 2000); // หมุน 1.5s
-    robot.queue_drive(20,270, 0, 2000); // หมุนกลับ 1.5s
+    robot.queue_drive(50,  0,  45, 7000); // เดินหน้า 2s
+    // robot.queue_drive(0, 90,  0, 3000); // เดินซ้าย 3s
+    // robot.queue_drive(0,180,  90, 3000); // หมุน 1.5s
+    // robot.queue_drive(0,270, 0, 3000); // หมุนกลับ 1.5s
     _started = true;
   }
 
   robot.update(); // ← เรียกอันนี้อันเดียวใน loop()
+  // robot.holonomic_drive_raw(50, 90, 0);
 }
