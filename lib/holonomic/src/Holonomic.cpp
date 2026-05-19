@@ -133,3 +133,15 @@ void Holonomic::_get_odom() {
   _y_previous = _y_now;
 }
 
+void Holonomic::odom_drive(float velocity, float X_value, float Y_value, float yaw) {
+
+  /*Now the function are program to calculate goal value by the equation from 3.5.1 in the document.
+    But the function still has problem that it doesn't has any feedback to control the goal position,
+    so the question is how to give the control feedback. Is it PID or just minus the _get_odom value??
+  */
+   /*Calculate goal value*/
+  _local_Angle = atan(Y_value / X_value);
+  _local_Displacement = sqrt(pow(X_value, 2) + pow(Y_value, 2));
+  holonomic_drive_raw(_local_Displacement, _local_Angle, yaw);
+
+}
