@@ -114,21 +114,22 @@ void Holonomic::reset_queue() {
 
 // ─────────────────────────── Odometry ───────────────────────────
 
-void Holonomic::_odom() {
+void Holonomic::_get_odom() {
+  /*Read X value from Encoder*/
   _x_current[0] = cos(_theta1) * M1.get_EncoderTicks;
   _x_current[1] = cos(_theta2) * M2.get_EncoderTicks;
   _x_current[2] = cos(_theta3) * M3.get_EncoderTicks;
-
+  /*Read Y value from Encoder*/
   _y_current[0] = sin(_theta1) * M1.get_EncoderTicks;
   _y_current[1] = sin(_theta2) * M2.get_EncoderTicks;
   _y_current[2] = sin(_theta3) * M3.get_EncoderTicks;
-
+  /*Convert X-Y value from encoder pules to meter*/
   _x_odom = (_x_current[0] + _x_current[1] + _x_current[2]) / 3100;
   _y_odom = (_y_current[0] + _y_current[1] + _y_current[2]) / 3100;
-
+  /*Referance Moving Frame*/
   _x_now = _x_previous + (cos(_yaw_feedback) - sin(_yaw_feedback)) * _x_odom;
   _y_now = _y_previous + (sin(_yaw_feedback) + cos(_yaw_feedback)) * _y_odom;
-
   _x_previous = _x_now;
   _y_previous = _y_now;
 }
+

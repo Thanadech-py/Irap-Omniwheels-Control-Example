@@ -50,7 +50,7 @@ private:
   float _x_current[3], _y_current[3];
   float _x_odom, _y_odom;
   float _x_now,  _y_now;
-  void _odom();
+  void _get_odom();
 
   // Command queue
   static constexpr uint8_t MAX_QUEUE = 10;
