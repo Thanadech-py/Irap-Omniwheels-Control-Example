@@ -65,7 +65,8 @@ void Holonomic::holonomic_drive_raw(float VR, float Alpha, float W) {
   _V_Wheels[1] = VR * cos(_theta2 - _Alpha) + (_Wheel_Length * _W);
   _V_Wheels[2] = VR * cos(_theta3 - _Alpha) + (_Wheel_Length * _W);
 
-  Serial.printf("X: %.2f , Y: %.2f , Yaw: %.2f\n", _x_now, _y_now, _yaw_feedback);
+  // Serial.printf("X: %.2f , Y: %.2f , Yaw: %.2f\n", _x_now, _y_now, _yaw_feedback);
+  get_odom();
 
   M1.set_rpm(_V_Wheels[0]);
   M2.set_rpm(_V_Wheels[1]);
@@ -94,7 +95,7 @@ void Holonomic::update() {
   if (!_is_running) {
     _time_function = millis();
     _is_running    = true;
-    Serial.printf("CMD %d: VR=%.1f Alpha=%.1f\n", _queue_index, cmd.VR, cmd.Alpha);
+    // Serial.printf("CMD %d: VR=%.1f Alpha=%.1f\n", _queue_index, cmd.VR, cmd.Alpha);
   }
 
   if (millis() - _time_function < cmd.duration) {
@@ -114,7 +115,7 @@ void Holonomic::reset_queue() {
 
 // ─────────────────────────── Odometry ───────────────────────────
 
-void Holonomic::_get_odom() {
+void Holonomic::get_odom() {
   /*Read X value from Encoder*/
   _x_current[0] = cos(_theta1) * M1.get_EncoderTicks;
   _x_current[1] = cos(_theta2) * M2.get_EncoderTicks;
@@ -127,21 +128,12 @@ void Holonomic::_get_odom() {
   _x_odom = (_x_current[0] + _x_current[1] + _x_current[2]) / 3100;
   _y_odom = (_y_current[0] + _y_current[1] + _y_current[2]) / 3100;
   /*Referance Moving Frame*/
-  _x_now = _x_previous + (cos(_yaw_feedback) - sin(_yaw_feedback)) * _x_odom;
-  _y_now = _y_previous + (sin(_yaw_feedback) + cos(_yaw_feedback)) * _y_odom;
+  _x_now = _x_previous + ((cos(_yaw_feedback) * _x_odom) + (-sin(_yaw_feedback) * _y_odom)) / 3100;
+  _y_now = _y_previous + ((sin(_yaw_feedback) * _x_odom) + (cos(_yaw_feedback) * _y_odom)) / 3100;
   _x_previous = _x_now;
   _y_previous = _y_now;
-}
 
-void Holonomic::odom_drive(float velocity, float X_value, float Y_value, float yaw) {
-
-  /*Now the function are program to calculate goal value by the equation from 3.5.1 in the document.
-    But the function still has problem that it doesn't has any feedback to control the goal position,
-    so the question is how to give the control feedback. Is it PID or just minus the _get_odom value??
-  */
-   /*Calculate goal value*/
-  _local_Angle = atan(Y_value / X_value);
-  _local_Displacement = sqrt(pow(X_value, 2) + pow(Y_value, 2));
-  holonomic_drive_raw(_local_Displacement, _local_Angle, yaw);
-
+  Serial.print(_x_now);
+  Serial.print(" , ");
+  Serial.println(_y_now);
 }

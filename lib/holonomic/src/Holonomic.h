@@ -20,9 +20,10 @@ public:
   void update();
   void reset_queue();
   void queue_drive(float VR, float Alpha, float W, unsigned long time);
-  void odom_drive(float velocity, float X_value, float Y_value, float yaw)
+  // void odom_drive(float x_value, float y_value, float yaw_value);
   void holonomic_drive_raw(float VR, float Alpha, float W);
   void compute(float value);
+  void get_odom();
 
   static float getYaw() {
     noInterrupts();
@@ -52,7 +53,7 @@ private:
   float _x_odom, _y_odom;
   float _x_now,  _y_now;
   float _local_Angle, _local_Displacement, _local_Yaw;
-  void _get_odom();
+  
 
   // Command queue
   static constexpr uint8_t MAX_QUEUE = 10;
