@@ -65,7 +65,6 @@ void Holonomic::holonomic_drive_raw(float VR, float Alpha, float W) {
   _V_Wheels[1] = VR * cos(_theta2 - _Alpha) + (_Wheel_Length * _W);
   _V_Wheels[2] = VR * cos(_theta3 - _Alpha) + (_Wheel_Length * _W);
 
-  // Serial.printf("X: %.2f , Y: %.2f , Yaw: %.2f\n", _x_now, _y_now, _yaw_feedback);
   get_odom();
 
   M1.set_rpm(_V_Wheels[0]);
@@ -95,7 +94,6 @@ void Holonomic::update() {
   if (!_is_running) {
     _time_function = millis();
     _is_running    = true;
-    // Serial.printf("CMD %d: VR=%.1f Alpha=%.1f\n", _queue_index, cmd.VR, cmd.Alpha);
   }
 
   if (millis() - _time_function < cmd.duration) {
@@ -116,6 +114,8 @@ void Holonomic::reset_queue() {
 // ─────────────────────────── Odometry ───────────────────────────
 
 void Holonomic::get_odom() {
+
+  _yaw_feedback_odom = (_yaw_feedback * PI) / 180;
   /*Read X value from Encoder*/
   _x_current[0] = cos(_theta1) * M1.get_EncoderTicks;
   _x_current[1] = cos(_theta2) * M2.get_EncoderTicks;
@@ -128,12 +128,25 @@ void Holonomic::get_odom() {
   _x_odom = (_x_current[0] + _x_current[1] + _x_current[2]) / 3100;
   _y_odom = (_y_current[0] + _y_current[1] + _y_current[2]) / 3100;
   /*Referance Moving Frame*/
-  _x_now = _x_previous + ((cos(_yaw_feedback) * _x_odom) + (-sin(_yaw_feedback) * _y_odom)) / 3100;
-  _y_now = _y_previous + ((sin(_yaw_feedback) * _x_odom) + (cos(_yaw_feedback) * _y_odom)) / 3100;
+  _x_now = _x_previous + ((cos(_yaw_feedback_odom) * _x_odom) + (-sin(_yaw_feedback_odom) * _y_odom));
+  _y_now = _y_previous + ((sin(_yaw_feedback_odom) * _x_odom) + (cos(_yaw_feedback_odom) * _y_odom));
   _x_previous = _x_now;
   _y_previous = _y_now;
 
+
+
+
+
+  
+  Serial.print("X Now :");
   Serial.print(_x_now);
   Serial.print(" , ");
-  Serial.println(_y_now);
+  Serial.print("Y Now :");
+  Serial.print(_y_now);
+  Serial.print(" , ");
+  Serial.print("X Odom :");
+  Serial.print(_x_odom);
+  Serial.print(" , ");
+  Serial.print("Y Odom :");
+  Serial.println(_y_odom);
 }
