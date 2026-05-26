@@ -125,7 +125,6 @@ void Holonomic::get_odom() {
   prev_ticks2 = M2.get_EncoderTicks;
   prev_ticks3 = M3.get_EncoderTicks;
 
-
   _yaw_feedback_odom = (_yaw_feedback * PI) / 180;
   /*Read X value from Encoder*/
   _x_current[0] = cos(_theta1) * d1;
@@ -149,18 +148,9 @@ void Holonomic::get_odom() {
   _x_previous = _x_now; 
   _y_previous = _y_now;
   
-  /*Serial.print("X Now :");
-  Serial.print(_x_now);
-  Serial.print(" , ");
-  Serial.print("Y Now :");
-  Serial.print(_y_now);
-  Serial.print(" , ");
-  Serial.print("X Odom :");
-  Serial.print(_x_odom);
-  Serial.print(" , ");
-  Serial.print("Y Odom :");
-  Serial.println(_y_odom);*/
 }
+
+// ───────────────────── Point to Point Navigation ─────────────────────
 
 void Holonomic::holonomic_ptp(float x_goal, float y_goal, float robot_speed, float W) {
   _dx = x_goal - _x_now;
@@ -174,6 +164,4 @@ void Holonomic::holonomic_ptp(float x_goal, float y_goal, float robot_speed, flo
 
   _direction = atan2(_dy, _dx) * 180.0f / PI;
   holonomic_drive_raw(robot_speed, _direction, W); 
-
-  Serial.println(_distance);
 }
