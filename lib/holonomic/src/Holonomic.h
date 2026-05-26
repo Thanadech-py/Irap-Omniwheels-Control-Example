@@ -20,7 +20,6 @@ public:
   void update();
   void reset_queue();
   void queue_drive(float VR, float Alpha, float W, unsigned long time);
-  // void odom_drive(float x_value, float y_value, float yaw_value);
   void holonomic_drive_raw(float VR, float Alpha, float W);
   void holonomic_ptp(float x_goal, float y_goal, float robot_speed, float W);
   void compute(float value);
