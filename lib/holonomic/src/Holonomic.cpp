@@ -115,28 +115,41 @@ void Holonomic::reset_queue() {
 
 void Holonomic::get_odom() {
 
+  static float prev_ticks1 = 0, prev_ticks2 = 0, prev_ticks3 = 0;
+
+  float d1 = M1.get_EncoderTicks - prev_ticks1;
+  float d2 = M2.get_EncoderTicks - prev_ticks2;
+  float d3 = M3.get_EncoderTicks - prev_ticks3;
+
+  prev_ticks1 = M1.get_EncoderTicks;
+  prev_ticks2 = M2.get_EncoderTicks;
+  prev_ticks3 = M3.get_EncoderTicks;
+
+
   _yaw_feedback_odom = (_yaw_feedback * PI) / 180;
   /*Read X value from Encoder*/
-  _x_current[0] = cos(_theta1) * M1.get_EncoderTicks;
-  _x_current[1] = cos(_theta2) * M2.get_EncoderTicks;
-  _x_current[2] = cos(_theta3) * M3.get_EncoderTicks;
+  _x_current[0] = cos(_theta1) * d1;
+  _x_current[1] = cos(_theta2) * d2;
+  _x_current[2] = cos(_theta3) * d3;
   /*Read Y value from Encoder*/
-  _y_current[0] = sin(_theta1) * M1.get_EncoderTicks;
-  _y_current[1] = sin(_theta2) * M2.get_EncoderTicks;
-  _y_current[2] = sin(_theta3) * M3.get_EncoderTicks;
+  _y_current[0] = sin(_theta1) * d1;
+  _y_current[1] = sin(_theta2) * d2;
+  _y_current[2] = sin(_theta3) * d3;
   /*Convert X-Y value from encoder pules to meter*/
-  _x_odom = (_x_current[0] + _x_current[1] + _x_current[2]) / 3100;
-  _y_odom = (_y_current[0] + _y_current[1] + _y_current[2]) / 3100;
+  _x_odom = (_x_current[0] + _x_current[1] + _x_current[2]) / 3100.0f;
+  _y_odom = (_y_current[0] + _y_current[1] + _y_current[2]) / 3100.0f;
+
+
+
   /*Referance Moving Frame*/
-  _x_now = _x_previous + ((cos(_yaw_feedback_odom) * _x_odom) + (-sin(_yaw_feedback_odom) * _y_odom));
-  _y_now = _y_previous + ((sin(_yaw_feedback_odom) * _x_odom) + (cos(_yaw_feedback_odom) * _y_odom));
-  _x_previous = _x_now;
+  _x_theta_cal = ((cos(_yaw_feedback_odom) * _x_odom) - (sin(_yaw_feedback_odom) * _y_odom));
+  _y_theta_cal = ((sin(_yaw_feedback_odom) * _x_odom) + (cos(_yaw_feedback_odom) * _y_odom));
+
+  _x_now = _x_previous + _x_theta_cal;
+  _y_now = _y_previous + _y_theta_cal;
+
+  _x_previous = _x_now; 
   _y_previous = _y_now;
-
-
-
-
-
   
   Serial.print("X Now :");
   Serial.print(_x_now);

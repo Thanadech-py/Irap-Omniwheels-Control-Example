@@ -52,6 +52,7 @@ private:
   float _x_current[3], _y_current[3];
   float _x_odom, _y_odom, _yaw_feedback_odom;
   float _x_now,  _y_now;
+  float _x_theta_cal, _y_theta_cal;
   float _local_Angle, _local_Displacement, _local_Yaw;
   
 
