@@ -139,8 +139,6 @@ void Holonomic::get_odom() {
   _x_odom = (_x_current[0] + _x_current[1] + _x_current[2]) / 3100.0f;
   _y_odom = (_y_current[0] + _y_current[1] + _y_current[2]) / 3100.0f;
 
-
-
   /*Referance Moving Frame*/
   _x_theta_cal = ((cos(_yaw_feedback_odom) * _x_odom) - (sin(_yaw_feedback_odom) * _y_odom));
   _y_theta_cal = ((sin(_yaw_feedback_odom) * _x_odom) + (cos(_yaw_feedback_odom) * _y_odom));
@@ -151,7 +149,7 @@ void Holonomic::get_odom() {
   _x_previous = _x_now; 
   _y_previous = _y_now;
   
-  Serial.print("X Now :");
+  /*Serial.print("X Now :");
   Serial.print(_x_now);
   Serial.print(" , ");
   Serial.print("Y Now :");
@@ -161,5 +159,21 @@ void Holonomic::get_odom() {
   Serial.print(_x_odom);
   Serial.print(" , ");
   Serial.print("Y Odom :");
-  Serial.println(_y_odom);
+  Serial.println(_y_odom);*/
+}
+
+void Holonomic::holonomic_ptp(float x_goal, float y_goal, float robot_speed, float W) {
+  _dx = x_goal - _x_now;
+  _dy = y_goal - _y_now;
+
+  _distance = hypot(_dx, _dy);
+  if (_distance <= _GOAL_THRESHOLD) {
+    holonomic_stop();
+    return;
+  }
+
+  _direction = atan2(_dy, _dx) * 180.0f / PI;
+  holonomic_drive_raw(robot_speed, _direction, W); 
+
+  Serial.println(_distance);
 }

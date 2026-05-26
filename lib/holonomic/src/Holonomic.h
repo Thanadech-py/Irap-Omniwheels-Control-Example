@@ -22,6 +22,7 @@ public:
   void queue_drive(float VR, float Alpha, float W, unsigned long time);
   // void odom_drive(float x_value, float y_value, float yaw_value);
   void holonomic_drive_raw(float VR, float Alpha, float W);
+  void holonomic_ptp(float x_goal, float y_goal, float robot_speed, float W);
   void compute(float value);
   void get_odom();
 
@@ -43,6 +44,7 @@ private:
 
   // Kinematics
   const float _Wheel_Length = 20.0f;
+  const float _GOAL_THRESHOLD = 0.05f; // meters
   float _theta1, _theta2, _theta3;
   float _Alpha, _W, _V_Robot;
   float _V_Wheels[3];
@@ -54,6 +56,8 @@ private:
   float _x_now,  _y_now;
   float _x_theta_cal, _y_theta_cal;
   float _local_Angle, _local_Displacement, _local_Yaw;
+  float _dx, _dy;
+  float _direction, _distance;
   
 
   // Command queue
