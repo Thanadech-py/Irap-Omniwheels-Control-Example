@@ -1,46 +1,29 @@
 
-This directory is intended for project specific (private) libraries.
-PlatformIO will compile them to static libraries and link into the executable file.
+This directory is intended for project-specific (private) libraries.
 
-The source code of each library should be placed in a separate directory
-("lib/your_library_name/[Code]").
-
-For example, see the structure of the following example libraries `Foo` and `Bar`:
-
-|--lib
+|-- lib
 |  |
-|  |--Bar
-|  |  |--docs
-|  |  |--examples
-|  |  |--src
-|  |     |- Bar.c
-|  |     |- Bar.h
-|  |  |- library.json (optional. for custom build options, etc) https://docs.platformio.org/page/librarymanager/config.html
+|  |-- DriveMotor
+|  |  |-- src
+|  |     |- DriveMotor.cpp
+|  |     |- DriveMotor.h
 |  |
-|  |--Foo
-|  |  |- Foo.c
-|  |  |- Foo.h
+|  |-- holonomic
+|  |  |-- src
+|  |     |- Holonomic.cpp
+|  |     |- Holonomic.h
+|  |
+|  |-- PID_for_omni
+|  |  |-- src
+|  |     |- PID_for_omni.cpp
+|  |     |- PID_for_omni.h
 |  |
 |  |- README --> THIS FILE
 |
 |- platformio.ini
+|--include
+|  |- README
 |--src
-   |- main.c
+   |- Irap-omnidirectional-example.cpp
 
-Example contents of `src/main.c` using Foo and Bar:
-```
-#include <Foo.h>
-#include <Bar.h>
 
-int main (void)
-{
-  ...
-}
-
-```
-
-The PlatformIO Library Dependency Finder will find automatically dependent
-libraries by scanning project source files.
-
-More information about PlatformIO Library Dependency Finder
-- https://docs.platformio.org/page/librarymanager/ldf.html

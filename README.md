@@ -11,6 +11,29 @@ made for every robot, So this maybe have a conflict with your project.
 
 ---
 
+<h2>The Structure of the program</h2>
+
+|--lib
+|  |
+|  |-DriveMotor
+|  |  |--src
+|  |     |- DriveMotor.cpp
+|  |     |- DriveMotor.h
+|  |
+|  |--holomic
+|  |  |--src
+|  |     |- Holonomic.cpp
+|  |     |- Holonomic.h
+|  |
+|  |--PID_for_omni
+|  |  |--src
+|  |     |- PID_for_omni.cpp
+|  |     |- PID_for_omni.h
+|
+|--src
+   |- Irap-omnidirectionanl-example.cpp    <--- Main Code
+
+
 <h2>Do not use this as a code base for your own project</h2>
 
 **just learn and study to understand the concept**.
