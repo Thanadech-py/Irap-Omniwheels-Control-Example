@@ -1,7 +1,5 @@
 <h1>Omnidirectional Wheels Control</h1>
 
----
-
 The Omnidiectional Wheels are mostly use in robotics because it made the robot has abilities to move
 in every direction possible, we called "**Omnidirectional**".
 
